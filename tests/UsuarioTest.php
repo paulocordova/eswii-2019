@@ -12,9 +12,18 @@ class UsuarioTest extends TestCase{
       $usuario = new Usuario();
       $this->assertEquals(
          TRUE,
-         $usuario->logar('paulo', '1213')
+         $usuario->logar('paulo', '123')
       );
 
+      unset($usuario);
+   }
+   /** @test */
+   public function testIncluirUsuario(){
+      $usuario = new Usuario();
+      $this->assertEquals(
+         TRUE,
+         $usuario->incluirUsuario("raul", "raul@gmail.com", "raul", "raul")
+      );
       unset($usuario);
    }
 }

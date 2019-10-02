@@ -19,7 +19,6 @@ class Usuario{
       $sql->execute();
 
       $resultado = $sql->get_result();
-
       if($resultado->num_rows === 0){
          $this->login = null;
          $this->nome = null;
@@ -27,7 +26,7 @@ class Usuario{
          $this->celular = null;
          $this->logado = FALSE;
       }else{
-         while($linha = $resultado->fetch_assoc()){
+         While($linha = $resultado->fetch_assoc()){
             $this->login = $linha['login'];
             $this->nome = $linha['nome'];
             $this->email = $linha['email'];
@@ -43,14 +42,19 @@ class Usuario{
       $conexaoDB = $this->conectarBanco();
 
       $sqlInsert = $conexaoDB->prepare("insert into usuario
-                                        (nome, email, login, senha)
-                                        values
-                                        (?, ?, ?, ?)");
+                                       (nome, email, login, senha)
+                                       values
+                                       (?, ?, ?, ?)");
       $sqlInsert->bind_param("ssss", $nome, $email, $login, $senha);
-
       $sqlInsert->execute();
-
-      return TRUE;
+      if(!$sqlInsert->error){
+         $retorno =  TRUE;
+      }else{
+         $retorno =  FALSE;
+      }
+      $conexaoDB->close();
+      $sqlInsert->close();
+      return $retorno;
    }
 
    private function conectarBanco(){
