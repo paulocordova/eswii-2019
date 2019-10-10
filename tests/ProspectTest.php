@@ -2,42 +2,46 @@
 namespace test;
 require_once('../vendor/autoload.php');
 require_once('../models/Prospect.php');
+require_once('../DAO/DAOProspect.php');
+
 use PHPUnit\Framework\TestCase;
-use models\Prospect;
+use MODELS\Prospect;
+use DAO\DAOProspect;
 
 class ProspectTest extends TestCase{
 
    /** @test */
    public function incluirProspect(){
-      $prospect = new Prospect();
+      $daoProspect = new DAOProspect();
       $this->assertEquals(
          TRUE,
-         $prospect->incluirProspect('Paulo Roberto Cordova', 'paulo@eu.com.br', '(49)96633-9988', 'facepaulo', '(49)8899-6699')
+         $daoProspect->incluirProspect('Paulo Roberto Cordova', 'paulo@eu.com.br', '(49)96633-9988', 'facepaulo', '(49)8899-6699')
       );
 
-      unset($prospect);
+      unset($daoProspect);
    }
    /** @test */
    public function atualizarProspect(){
-      $prospect = new Prospect();
+      $daoProspect = new DAOProspect();
       $this->assertEquals(
          TRUE,
-         $prospect->atualizarProspect('Paulo Roberto Cordova', 'paulo@gmail.com.br', '(49)96633-9988',  'facepaulo', '(49)8899-6699', 3)
+         $daoProspect->atualizarProspect('Paulo Roberto Cordova', 'paulo@gmail.com.br', '(49)96633-9988',  'facepaulo', '(49)8899-6699', 3)
       );
-      unset($prospect);
+      unset($daoProspect);
    }
    /** @test */
    public function excluirProspect(){
-      $prospect = new Prospect();
+      $daoProspect = new DAOProspect();
       $this->assertEquals(
          TRUE,
-         $prospect->excluirProspect(2)
+         $daoProspect->excluirProspect(2)
       );
-      unset($prospect);
+      unset($daoProspect);
    }
    /** @test */
    public function buscarTodosProspectTest(){
-      $prospect = new Prospect();
+      $daoProspect = new DAOProspect();
+
       $arrayComparar = array();
 
       $conn = new \mysqli('localhost', 'root', '', 'bd_prospects');
@@ -48,29 +52,25 @@ class ProspectTest extends TestCase{
       $result = $sqlBusca->get_result();
       if($result->num_rows !== 0){
          while($linha = $result->fetch_assoc()) {
-            $linhaComparar = array(
-               "codProspect" => $linha['cod_prospect'],
-               "nome" => $linha['nome'],
-               "email" => $linha['email'],
-               "celular" => $linha['celular'],
-               "facebook" => $linha['facebook'],
-               "whatsapp" => $linha['whatsapp']
-            );
+            $linhaComparar = new Prospect();
+            $linhaComparar->addProspect($linha['cod_prospect'], $linha['nome'], $linha['email'], $linha['celular'],
+                                   $linha['facebook'], $linha['whatsapp']);
             $arrayComparar[] = $linhaComparar;
          }
       }
 
       $this->assertEquals(
          $arrayComparar,
-         $prospect->buscarProspects()
+         $daoProspect->buscarProspects()
       );
-      unset($prospect);
+      unset($daoProspect);
+      unset($linhaComparar);
       $sqlBusca->close();
       $conn->close();
    }
    /** @test */
    public function buscarProspectPorEmailTest(){
-      $prospect = new Prospect();
+      $daoProspect = new DAOProspect();
       $arrayComparar = array();
       $emailProspect = 'gernunes@hotmail.com';
 
@@ -83,24 +83,20 @@ class ProspectTest extends TestCase{
       $sqlBusca->execute();
       $result = $sqlBusca->get_result();
       if($result->num_rows !== 0){
-         while($linha = $result->fetch_assoc()) {
-            $linhaComparar = array(
-               "codProspect" => $linha['cod_prospect'],
-               "nome" => $linha['nome'],
-               "email" => $linha['email'],
-               "celular" => $linha['celular'],
-               "facebook" => $linha['facebook'],
-               "whatsapp" => $linha['whatsapp']
-            );
+        while($linha = $result->fetch_assoc()) {
+            $linhaComparar = new Prospect();
+            $linhaComparar->addProspect($linha['cod_prospect'], $linha['nome'], $linha['email'], $linha['celular'],
+                                   $linha['facebook'], $linha['whatsapp']);
             $arrayComparar[] = $linhaComparar;
          }
       }
 
       $this->assertEquals(
          $arrayComparar,
-         $prospect->buscarProspects($emailProspect)
+         $daoProspect->buscarProspects($emailProspect)
       );
-      unset($prospect);
+      unset($daoProspect);
+      unset($linhaComparar);
       $sqlBusca->close();
       $conn->close();
    }
