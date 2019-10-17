@@ -1,13 +1,30 @@
 <?php
 namespace DAO;
-
+mysqli_report(MYSQLI_REPORT_STRICT);
 require_once('../models/Usuario.php');
 use MODELS\Usuario;
-
+/**
+ * Esta classe é responsável por fazer a comunicação com o banco de dados,
+ * provendo as funções de logar e incluir um novo usuário
+ * @author Paulo Roberto Córdova
+ * @package DAO
+ */
 class DAOUsuario{
-
+   /**
+    * Faz o login do usuário no sistema e retorna um objeto usuário
+    * @param string $login Login do usuário
+    * @param string $senha Senha do Usuário
+   * @return Usuario Se logado com sucesso os atributos serão retornado com
+   * os dados do usuário, senão retornarão com valor nulo, exceto o atributo
+   * $logado, que retornará FALSE
+   */
    public function logar($login, $senha){
-      $conexaoDB = $this->conectarBanco();
+      try{
+         $conexaoDB = $this->conectarBanco();
+      }catch(\Exception $e){
+        die($e->getMessage());
+      }
+
 
       $usuario = new Usuario();
       $sql = $conexaoDB->prepare("select login, nome, email, celular from usuario
@@ -30,8 +47,20 @@ class DAOUsuario{
       $conexaoDB->close();
       return $usuario;
    }
+   /**
+    * Inclui um novo usuário no sistema
+    * @param string $nome Nome do usuário
+    * @param string $email Email do usuário
+    * @param string $login Login do usuário
+    * @param string $senha Senha do usuário
+    * @return TRUE|Exception TRUE para inclusão bem sucedida ou Exception para inclusão mal sucedida
+    */
    public function incluirUsuario($nome, $email, $login, $senha){
-      $conexaoDB = $this->conectarBanco();
+      try{
+         $conexaoDB = $this->conectarBanco();
+      }catch(\Exception $e){
+         die($e->getMessage());
+      }
 
       $sqlInsert = $conexaoDB->prepare("insert into usuario
                                        (nome, email, login, senha)
@@ -42,16 +71,32 @@ class DAOUsuario{
       if(!$sqlInsert->error){
          $retorno =  TRUE;
       }else{
-         $retorno =  FALSE;
+         throw new \Exception("Não foi possível incluir novo usuário!");
+         die;
       }
       $conexaoDB->close();
       $sqlInsert->close();
       return $retorno;
    }
-
+   /**
+    * Realiza a conexão com o banco de dados usando msqli
+    * @return \mysqli|Exception
+    */
    private function conectarBanco(){
-      $conn = new \mysqli('localhost', 'root', '', 'bd_prospects');
-      return $conn;
+      if(!defined('DS')){
+         define('DS', DIRECTORY_SEPARATOR);
+      }
+      if(!defined('BASE_DIR')){
+         define('BASE_DIR', dirname(__FILE__).DS);
+      }
+      require(BASE_DIR.'config.php');
+      try{
+         $conn = new \mysqli($dbhost, $user, $password, $banco);
+         return $conn;
+      }catch(mysqli_sql_exception $e){
+         throw new \Exception($e);
+         die;
+      }
    }
 }
 ?>
