@@ -4,26 +4,27 @@ require_once('../vendor/autoload.php');
 require_once('../models/Usuario.php');
 require_once('../DAO/DAOUsuario.php');
 use PHPUnit\Framework\TestCase;
-use MODELS\Usuario;
-use DAO\DAOUsuario;
+use models\Usuario;
+use dao\DAOUsuario;
 
 class UsuarioTest extends TestCase{
 
    /** @test */
    public function testLogar(){
-      $usuario = new Usuario();
       $daoUsuario = new DAOUsuario();
+      $usuario = new Usuario();
 
       $usuario->addUsuario("paulo", "paulo", "paulo@eu.com", "", TRUE);
-
       $this->assertEquals(
          $usuario,
          $daoUsuario->logar('paulo', '123')
       );
 
+
       unset($usuario);
+      unset($daoUsuario);
    }
-   /** @test */
+    /** @test */
    public function testIncluirUsuario(){
       $daoUsuario = new DAOUsuario();
       $this->assertEquals(
