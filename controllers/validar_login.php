@@ -8,7 +8,7 @@ if(isset($_POST['login']) && isset($_POST['senha'])){
    $senha = $_POST['senha'];
 
    $ctrlUsuario = new ControllerUsuario();
-   $usuario = $ctrlUsuario->fazerLogin();
+   $usuario = $ctrlUsuario->fazerLogin($login, $senha);
 
    if($usuario->logado){
       $_SESSION['usuario'] = serialize($usuario);
