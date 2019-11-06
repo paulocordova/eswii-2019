@@ -1,13 +1,6 @@
 <?php
-require_once('DAOUsuario.php');
-use DAO\DAOUsuario;
-$daoUsuario = new DAOUsuario();
+     $separador = DIRECTORY_SEPARATOR;
+     $root = $_SERVER['DOCUMENT_ROOT'].$separador;
 
-
-try{
-   $daoUsuario->incluirUsuario("raul", "raul@gmail.com", "raul", "raul");
-}catch(\Exception $e){
-   die($e->getMessage());
-}
 
 ?>
